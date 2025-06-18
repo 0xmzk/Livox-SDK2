@@ -89,9 +89,10 @@ socket_t CreateSocket(uint16_t port, bool nonblock, bool reuse_port, bool is_bro
 
   status = bind(sock, (const struct sockaddr *)&servaddr, sizeof(servaddr));
   if (status != 0) {
-    printf("bind failed\n");
-    close(sock);
-    return -1;
+      // Print the numeric IP address and port
+      printf("bind to %u : %d failed\n", ntohl(servaddr.sin_addr.s_addr), ntohs(servaddr.sin_port));
+      close(sock);
+      return -1;
   }
 
   if (is_broadcast) {
