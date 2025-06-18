@@ -29,6 +29,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 namespace livox {
 namespace lidar {
@@ -89,8 +90,12 @@ socket_t CreateSocket(uint16_t port, bool nonblock, bool reuse_port, bool is_bro
 
   status = bind(sock, (const struct sockaddr *)&servaddr, sizeof(servaddr));
   if (status != 0) {
-      // Print the numeric IP address and port
-      printf("bind to %u : %d failed\n", ntohl(servaddr.sin_addr.s_addr), ntohs(servaddr.sin_port));
+      // Convert IP address to string
+      const char* ip_str = inet_ntoa(servaddr.sin_addr);
+      // Convert port number to host byte order
+      uint16_t port = ntohs(servaddr.sin_port);
+
+      printf("bind to %s : %d failed\n", ip_str, port);
       close(sock);
       return -1;
   }
